@@ -2,7 +2,6 @@ package config
 
 import (
 	"Depublic-App-Service/model"
-	"fmt"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -12,21 +11,15 @@ var database *gorm.DB
 var e error
 
 func DatabaseInit() {
-	host := "localhost"
-	user := "postgres"
-	password := "Malik1011*"
-	dbName := "postgres"
-	port := 5432
-
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Jakarta", host, user, password, dbName, port)
+	dsn := "host=localhost user=postgres password=Malik1011* dbname=depublic port=5432 sslmode=disable TimeZone=Asia/Jakarta"
 	database, e = gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if e != nil {
 		panic(e)
 	}
+	database.AutoMigrate(&model.User{}, &model.Event{})
 }
 
 func DB() *gorm.DB {
-	database.AutoMigrate(&model.Event{}, &model.User{})
 	return database
 }

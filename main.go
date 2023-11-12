@@ -1,7 +1,8 @@
 package main
 
-import "fmt"
+import "Depublic-App-Service/route"
 
 func main() {
-	fmt.Println("tes")
+
+	route.InitRoutes()
 }

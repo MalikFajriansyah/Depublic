@@ -7,7 +7,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-func BasicAuth(roles ...string) echo.MiddlewareFunc {
+func BasicAuth(role string) echo.MiddlewareFunc {
 	db := config.DB()
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
@@ -15,10 +15,8 @@ func BasicAuth(roles ...string) echo.MiddlewareFunc {
 			if ok {
 				var user model.User
 				if db.Where("username = ? AND password = ?", username, password).First(&user).Error == nil {
-					for _, role := range roles {
-						if user.Role == role {
-							return next(c)
-						}
+					if user.Role == role {
+						return next(c)
 					}
 				}
 			}
