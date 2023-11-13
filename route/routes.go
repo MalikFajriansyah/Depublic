@@ -2,24 +2,17 @@ package route
 
 import (
 	"Depublic-App-Service/controller"
-	"Depublic-App-Service/middleware"
+	"Depublic-App-Service/validation"
 
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
-)
-
-var (
-	db *gorm.DB
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func InitRoutes() {
 	e := echo.New()
 
-	userGroup := e.Group("/user")
-	userGroup.Use(middleware.BasicAuth("user"))
-
-	e.POST("/register", controller.RegisterUser)
-	e.POST("/login", controller.LoginUser)
-
+	// e.Use(middleware.BasicAuth(validation.BasicAuthValidator))
+	e.POST("/register", controller.RegisterUser, middleware.BasicAuth(validation.BasicAuthValidator))
+	e.POST("/login", controller.LoginUser, middleware.BasicAuth(validation.BasicAuthValidator))
 	e.Start(":8080")
 }
