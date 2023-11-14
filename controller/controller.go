@@ -1,18 +1,24 @@
 package controller
 
 import (
+	"Depublic-App-Service/config"
 	"Depublic-App-Service/model"
+	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
-)
-
-var (
-	db *gorm.DB
 )
 
 func LoginUser(c echo.Context) error {
+	db, err := config.DatabaseInit()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.AutoMigrate(&model.User{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
@@ -29,6 +35,15 @@ func LoginUser(c echo.Context) error {
 }
 
 func RegisterUser(c echo.Context) error {
+	db, err := config.DatabaseInit()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.AutoMigrate(&model.User{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	var newUser model.User
 	if err := c.Bind(&newUser); err != nil {
 		return err
