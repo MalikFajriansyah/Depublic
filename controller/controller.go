@@ -19,19 +19,17 @@ func LoginUser(c echo.Context) error {
 		log.Fatal(err)
 	}
 
-	username := c.FormValue("username")
-	password := c.FormValue("password")
-
-	var user model.User
-	if db.Where("username = ?", username).First(&user) == nil {
-		return echo.NewHTTPError(http.StatusUnauthorized, "Username tidak ditemukan")
+	u := new(model.User)
+	if err := c.Bind(u); err != nil {
+		return err
 	}
 
-	if user.Password != password {
-		return echo.NewHTTPError(http.StatusUnauthorized, "Kata sandi salah")
+	var existingUser model.User
+	if db.Where("username = ? AND password = ?", u.Username, u.Password).First(&existingUser) == nil {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"})
 	}
 
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, map[string]string{"message": "Login successfull"})
 }
 
 func RegisterUser(c echo.Context) error {
