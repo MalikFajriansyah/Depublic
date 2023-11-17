@@ -25,7 +25,7 @@ func LoginUser(c echo.Context) error {
 	}
 
 	var existingUser model.User
-	if db.Where("username = ? AND password = ?", u.Username, u.Password).First(&existingUser) == nil {
+	if db.Where("username = ? AND password = ?", u.Username, u.Password).Find(&existingUser) == nil {
 		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"})
 	}
 
