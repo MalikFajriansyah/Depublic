@@ -2,8 +2,10 @@ package route
 
 import (
 	"Depublic-App-Service/controller"
+	"Depublic-App-Service/validation"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func InitRoutes() {
@@ -11,7 +13,9 @@ func InitRoutes() {
 
 	// e.Use(middleware.BasicAuth(validation.BasicAuthValidator))
 	// e.Use(middleware.BasicAuth(validation.BasicAuthValidator))
+	user := e.Group("/depublic")
+	user.Use(middleware.BasicAuth(validation.BasicAuthValidator))
 	e.POST("/register", controller.RegisterUser)
-	e.POST("/login", controller.LoginUser)
+	user.POST("/login", controller.LoginUser)
 	e.Start(":8080")
 }
