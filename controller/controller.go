@@ -3,6 +3,7 @@ package controller
 import (
 	"Depublic-App-Service/config"
 	"Depublic-App-Service/model"
+	"Depublic-App-Service/validation"
 	"log"
 	"net/http"
 
@@ -23,12 +24,22 @@ func LoginUser(c echo.Context) error {
 	if err := c.Bind(u); err != nil {
 		return err
 	}
+	// isValid, err := validation.BasicAuthValidator(u.Username, u.Password, c)
+	// if err != nil {
+	// 	return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal server error"})
+	// }
+	// if !isValid {
+	// 	return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"})
+	// }
 
 	var existingUser model.User
-	if db.Where("username = ? AND password = ?", u.Username, u.Password).Find(&existingUser) == nil {
+	if err := db.Where("username = ? AND password = ?", u.Username, u.Password).First(&existingUser).Error; err != nil {
 		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"})
 	}
 
+	if !validation.VerifyPassword(u.Password, existingUser.Password) {
+		return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"})
+	}
 	return c.JSON(http.StatusOK, map[string]string{"message": "Login successfull"})
 }
 
