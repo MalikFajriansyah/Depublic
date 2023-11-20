@@ -17,5 +17,7 @@ func InitRoutes() {
 	user.Use(middleware.BasicAuth(validation.BasicAuthValidator))
 	user.POST("/login", controller.LoginUser)
 	e.POST("/register", controller.RegisterUser)
+
+	e.GET("/", controller.GetAllEvent)
 	e.Start(":8080")
 }

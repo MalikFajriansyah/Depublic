@@ -7,38 +7,11 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 )
 
+/* Func untuk user*/
 func LoginUser(c echo.Context) error {
-	// db, err := config.DatabaseInit()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// err = db.AutoMigrate(&model.User{})
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// u := new(model.User)
-	// if err := c.Bind(u); err != nil {
-	// 	return err
-	// }
-	// isValid, err := validation.BasicAuthValidator(u.Username, u.Password, c)
-	// if err != nil {
-	// 	return c.JSON(http.StatusInternalServerError, map[string]string{"error": "Internal server error"})
-	// }
-	// if !isValid {
-	// 	return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"})
-	// }
-
-	// var existingUser model.User
-	// if err := db.Where("username = ? AND password = ?", u.Username, u.Password).First(&existingUser).Error; err != nil {
-	// 	return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"})
-	// }
-
-	// if !validation.VerifyPassword(u.Password, existingUser.Password) {
-	// 	return c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"})
-	// }
 	return c.JSON(http.StatusOK, map[string]string{"message": "Login successfull"})
 }
 
@@ -71,10 +44,47 @@ func RegisterUser(c echo.Context) error {
 	//setel role user registrasi
 	newUser.Role = "user"
 
+	//encrypt password
+	hashedPassword, err := hashPassword(newUser.Password)
+	if err != nil {
+		return err
+	}
+	newUser.Password = hashedPassword
+
 	//create data baru ke database
 	if err := db.Create(&newUser).Error; err != nil {
 		return err
 	}
 
-	return c.JSON(http.StatusCreated, newUser)
+	return c.JSON(http.StatusCreated, map[string]string{"message": "Akun berhasil dibuat"})
 }
+
+func hashPassword(password string) (string, error) {
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", err
+	}
+	return string(hashedPassword), nil
+}
+
+/* Func untuk user*/
+
+/* Func untuk event*/
+func GetAllEvent(c echo.Context) error {
+	db, err := config.DatabaseInit()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.AutoMigrate(&model.Event{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	var events []*model.Event
+	if err := db.Find(&events).Error; err != nil {
+		c.JSON(http.StatusNotFound, map[string]string{"message": "Event belum tersedia"})
+	}
+
+	return c.JSON(http.StatusOK, events)
+}
+
+/* Func untuk event*/
