@@ -15,7 +15,7 @@ func InitRoutes() {
 	// e.Use(middleware.BasicAuth(validation.BasicAuthValidator))
 	user := e.Group("/depublic")
 	user.Use(middleware.BasicAuth(validation.BasicAuthValidator))
-	e.POST("/register", controller.RegisterUser)
 	user.POST("/login", controller.LoginUser)
+	e.POST("/register", controller.RegisterUser)
 	e.Start(":8080")
 }

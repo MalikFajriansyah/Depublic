@@ -1,6 +1,10 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
 	gorm.Model
@@ -17,8 +21,11 @@ type Ticket struct {
 
 type Event struct {
 	gorm.Model
-	Name      string  `json:"name" gorm:"not null"`
-	Date      string  `json:"date" gorm:"not null"`
-	Price     float64 `json:"price" gorm:"not null"`
-	Available int     `json:"available" gorm:"not null"`
+	EventName   string    `json:"name" gorm:"not null"`
+	Date        time.Time `json:"date" gorm:"not null"`
+	Description string    `json:"description" gorm:"not null"`
+	Price       float64   `json:"price" gorm:"not null"`
+	Category    string    `json:"category" gorm:"not null"`
+	Location    string    `json:"location" gorm:"not null"`
+	Available   int       `json:"available" gorm:"not null"`
 }

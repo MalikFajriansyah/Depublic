@@ -4,9 +4,9 @@ import (
 	"Depublic-App-Service/config"
 	"Depublic-App-Service/model"
 	"log"
+	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"golang.org/x/crypto/bcrypt"
 )
 
 func BasicAuthValidator(username, password string, c echo.Context) (bool, error) {
@@ -14,26 +14,32 @@ func BasicAuthValidator(username, password string, c echo.Context) (bool, error)
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	adminUsername := "AdminTes"
-	adminPassword := "Tes12345"
-	if username == adminUsername && password == adminPassword {
-		return true, nil
+	err = db.AutoMigrate(&model.User{})
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	var user model.User
+	// adminUsername := "AdminTes"
+	// adminPassword := "Tes12345"
+	// if username == adminUsername && password == adminPassword {
+	// 	return true, nil
+	// }
 
-	if err := db.Where("username = ? AND password = ?", username, password).First(&user).Error; err != nil {
+	user := new(model.User)
+	if err := c.Bind(user); err != nil {
 		return false, nil
 	}
 
-	if !VerifyPassword(password, user.Password) {
-		return false, nil
+	var existingUser model.User
+
+	if err := db.Where("username = ? AND password = ?", username, password).First(&existingUser).Error; err != nil {
+		message := (c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"}))
+		return false, message
 	}
 	return true, nil
 }
 
-func VerifyPassword(inputPassword, storedHash string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(inputPassword))
-	return err == nil
-}
+// func VerifyPassword(inputPassword, storedHash string) bool {
+// 	err := bcrypt.CompareHashAndPassword([]byte(storedHash), []byte(inputPassword))
+// 	return err == nil
+// }
