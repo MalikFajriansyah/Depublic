@@ -12,7 +12,7 @@ Depublic is an online ticketing service. This repo contains a web service or bac
 ```
 #### Login
 ```http
-  use middleware.BasicAuth
+  use middleware.BasicAuth from echo framework
   POST /depublic/login
 ```
 
@@ -28,10 +28,18 @@ Depublic is an online ticketing service. This repo contains a web service or bac
 ```http
   GET /events/category/${category}
 ```
-
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `category`      | `string` | **Required**. category of item to fetch |
+
+#### Get event by location
+
+```http
+  GET /events/location/${location}
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `location`      | `string` | **Required**. location of item to fetch |
 
 
 ## Features

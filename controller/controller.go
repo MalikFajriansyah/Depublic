@@ -98,9 +98,27 @@ func GetEventByCategory(c echo.Context) error {
 	}
 
 	category := c.Param("category")
-	var events []model.Event
+	var events model.Event
 	if err := db.Where("category = ?", category).Find(&events).Error; err != nil {
-		c.JSON(http.StatusNotFound, map[string]string{"error": "Kategori tersebut tidak ada di daftar"})
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Kategori tersebut tidak ada di daftar"})
+	}
+	return c.JSON(http.StatusOK, events)
+}
+
+func GetEventByLocation(c echo.Context) error {
+	db, err := config.DatabaseInit()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.AutoMigrate(&model.Event{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	location := c.Param("location")
+	var events model.Event
+	if err := db.Where("location = ?", location).Find(&events).Error; err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Tidak ada untuk lokasi ini"})
 	}
 	return c.JSON(http.StatusOK, events)
 }
@@ -115,9 +133,9 @@ func SearchEventName(c echo.Context) error {
 		log.Fatal(err)
 	}
 
-	searchQuery := c.QueryParam("eventName")
+	// searchQuery := c.QueryParam("eventName")
 	var events []model.Event
-	if err := db.Where("name_event LIKE ?", "%"+searchQuery+"%").Find(&events); err != nil {
+	if err := db.Raw("SELECT * FROM users WHERE event_name LIKE %?1%").Scan(&events); err != nil {
 		return c.JSON(http.StatusNotFound, map[string]string{"error": "Tidak ada event"})
 	}
 	return c.JSON(http.StatusOK, events)

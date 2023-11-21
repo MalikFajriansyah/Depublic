@@ -20,6 +20,7 @@ func InitRoutes() {
 
 	e.GET("/events", controller.GetAllEvent)
 	e.GET("/events/category/:category", controller.GetEventByCategory)
+	e.GET("/events/location/:location", controller.GetEventByLocation)
 	e.GET("/events/search", controller.SearchEventName)
 	e.POST("/addEvent", controller.CreateEvent)
 	e.Start(":8080")
