@@ -19,5 +19,6 @@ func InitRoutes() {
 	e.POST("/register", controller.RegisterUser)
 
 	e.GET("/", controller.GetAllEvent)
+	e.POST("/addEvent", controller.CreateEvent)
 	e.Start(":8080")
 }
