@@ -18,7 +18,9 @@ func InitRoutes() {
 	user.POST("/login", controller.LoginUser)
 	e.POST("/register", controller.RegisterUser)
 
-	e.GET("/", controller.GetAllEvent)
+	e.GET("/events", controller.GetAllEvent)
+	e.GET("/events/category/:category", controller.GetEventByCategory)
+	e.GET("/events/search", controller.SearchEventName)
 	e.POST("/addEvent", controller.CreateEvent)
 	e.Start(":8080")
 }

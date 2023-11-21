@@ -81,9 +81,45 @@ func GetAllEvent(c echo.Context) error {
 	}
 	var events []model.Event
 	if err := db.Find(&events).Error; err != nil {
-		c.JSON(http.StatusNotFound, map[string]string{"message": "Event belum tersedia"})
+		return c.JSON(http.StatusNotFound, map[string]string{"message": "Event belum tersedia"})
 	}
 
+	return c.JSON(http.StatusOK, events)
+}
+
+func GetEventByCategory(c echo.Context) error {
+	db, err := config.DatabaseInit()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.AutoMigrate(&model.Event{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	category := c.Param("category")
+	var events []model.Event
+	if err := db.Where("category = ?", category).Find(&events).Error; err != nil {
+		c.JSON(http.StatusNotFound, map[string]string{"error": "Kategori tersebut tidak ada di daftar"})
+	}
+	return c.JSON(http.StatusOK, events)
+}
+
+func SearchEventName(c echo.Context) error {
+	db, err := config.DatabaseInit()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.AutoMigrate(&model.Event{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	searchQuery := c.QueryParam("eventName")
+	var events []model.Event
+	if err := db.Where("name_event LIKE ?", "%"+searchQuery+"%").Find(&events); err != nil {
+		return c.JSON(http.StatusNotFound, map[string]string{"error": "Tidak ada event"})
+	}
 	return c.JSON(http.StatusOK, events)
 }
 
