@@ -41,12 +41,22 @@ Depublic is an online ticketing service. This repo contains a web service or bac
 | :-------- | :------- | :-------------------------------- |
 | `location`      | `string` | **Required**. location of item to fetch |
 
+#### Search event
+
+```http
+  GET /events/search?event_name=
+```
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `event_name`      | `string` | **Required**. event_name of item to fetch |
+
 
 ## Features
 
 - Login and Register user (done)
-- User Profile (in the development)
 - Search and Filter (in the development)
+- Implement Token (To Do)
+- User Profile (To Do)
 - Transaction History (To Do)
 - App Notification (To Do)
 

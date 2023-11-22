@@ -21,7 +21,7 @@ type Ticket struct {
 
 type Event struct {
 	gorm.Model
-	EventName   string    `json:"eventName" gorm:"not null"`
+	EventName   string    `json:"event_name" gorm:"not null"`
 	Date        time.Time `json:"date" gorm:"not null"` //format time CCYY-MM-DDThh:mm:ssZ Z = zona UTC
 	Description string    `json:"description" gorm:"not null"`
 	Price       string    `json:"price" gorm:"not null"`

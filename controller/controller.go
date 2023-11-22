@@ -133,11 +133,12 @@ func SearchEventName(c echo.Context) error {
 		log.Fatal(err)
 	}
 
-	// searchQuery := c.QueryParam("eventName")
+	searchQuery := c.QueryParam("event_name")
 	var events []model.Event
-	if err := db.Raw("SELECT * FROM users WHERE event_name LIKE %?1%").Scan(&events); err != nil {
-		return c.JSON(http.StatusNotFound, map[string]string{"error": "Tidak ada event"})
-	}
+	// if err := db.Where("event_name LIKE ?", "%"+searchQuery+"%").Find(&events); err != nil {
+	// 	return c.JSON(http.StatusNotFound, map[string]string{"error": "Tidak ada event"})
+	// }
+	db.Where("event_name LIKE ?", "%"+searchQuery+"%").Find(&events)
 	return c.JSON(http.StatusOK, events)
 }
 
