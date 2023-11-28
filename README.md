@@ -54,8 +54,8 @@ Depublic is an online ticketing service. This repo contains a web service or bac
 ## Features
 
 - Login and Register user (done)
-- Search and Filter (in the development)
-- Implement Token (To Do)
+- Search and Filter (done)
+- Implement JWT for authentication and authorization (On Progress)
 - User Profile (To Do)
 - Transaction History (To Do)
 - App Notification (To Do)
