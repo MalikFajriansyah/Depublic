@@ -138,7 +138,7 @@ func SearchEventName(c echo.Context) error {
 	// if err := db.Where("event_name LIKE ?", "%"+searchQuery+"%").Find(&events); err != nil {
 	// 	return c.JSON(http.StatusNotFound, map[string]string{"error": "Tidak ada event"})
 	// }
-	db.Where("event_name LIKE ?", "%"+searchQuery+"%").Find(&events)
+	db.Where("event_name ILIKE ?", "%"+searchQuery+"%").Find(&events)
 	return c.JSON(http.StatusOK, events)
 }
 
