@@ -53,7 +53,7 @@ Depublic is an online ticketing service. This repo contains a web service or bac
 
 ## Features
 
-- Login and Register user (done)
+- Login and Register user use echo middleware basicAuth(done)
 - Search and Filter (done)
 - Implement JWT for authentication and authorization (On Progress)
 - User Profile (To Do)

@@ -11,8 +11,6 @@ import (
 func InitRoutes() {
 	e := echo.New()
 
-	// e.Use(middleware.BasicAuth(validation.BasicAuthValidator))
-	// e.Use(middleware.BasicAuth(validation.BasicAuthValidator))
 	user := e.Group("/depublic")
 	user.Use(middleware.BasicAuth(validation.BasicAuthValidator))
 	user.POST("/login", controller.LoginUser)

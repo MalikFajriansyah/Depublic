@@ -11,6 +11,7 @@ import (
 )
 
 func BasicAuthValidator(username, password string, c echo.Context) (bool, error) {
+	var role string
 	db, err := config.DatabaseInit()
 	if err != nil {
 		log.Fatal(err)
@@ -20,19 +21,17 @@ func BasicAuthValidator(username, password string, c echo.Context) (bool, error)
 		log.Fatal(err)
 	}
 
-	adminUsername := "AdminTes"
-	adminPassword := "Tes12345"
-	if username == adminUsername && password == adminPassword {
-		message := c.JSON(http.StatusOK, map[string]string{"message": "Welcome to dashboard admin"})
-		return true, message
-	}
-
 	user := new(model.User)
 	if err := c.Bind(user); err != nil {
 		return false, nil
 	}
 
 	var existingUser model.User
+
+	if err := db.Where("role = admin", role).First(&existingUser).Error; err != nil {
+		message := c.String(http.StatusOK, "Welcome to dashboard admin")
+		return true, message
+	}
 
 	if err := db.Where("username = ?", username).First(&existingUser).Error; err != nil {
 		message := (c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"}))
