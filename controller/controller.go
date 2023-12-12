@@ -162,3 +162,10 @@ func CreateEvent(c echo.Context) error {
 }
 
 /* Func untuk event*/
+
+/* Func untuk page JWT*/
+func DashboardJwt(c echo.Context) error {
+	return c.JSON(http.StatusOK, map[string]string{
+		"Message": "Login Success",
+	})
+}

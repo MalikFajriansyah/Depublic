@@ -11,7 +11,6 @@ import (
 )
 
 func BasicAuthValidator(username, password string, c echo.Context) (bool, error) {
-	var role string
 	db, err := config.DatabaseInit()
 	if err != nil {
 		log.Fatal(err)
@@ -28,17 +27,12 @@ func BasicAuthValidator(username, password string, c echo.Context) (bool, error)
 
 	var existingUser model.User
 
-	if err := db.Where("role = admin", role).First(&existingUser).Error; err != nil {
-		message := c.String(http.StatusOK, "Welcome to dashboard admin")
-		return true, message
-	}
-
 	if err := db.Where("username = ?", username).First(&existingUser).Error; err != nil {
 		message := (c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"}))
 		return false, message
 	}
 
-	if err := verifyPassword(password, existingUser.Password); err != nil {
+	if err := verifyPasswordBasicAuth(password, existingUser.Password); err != nil {
 		message := (c.JSON(http.StatusUnauthorized, map[string]string{"error": "Invalid username or password"}))
 		return false, message
 	}
@@ -46,6 +40,6 @@ func BasicAuthValidator(username, password string, c echo.Context) (bool, error)
 }
 
 // compare password dari user dengan passwod yang sudah terencrypt di database
-func verifyPassword(inputPassword, hashedPassword string) error {
+func verifyPasswordBasicAuth(inputPassword, hashedPassword string) error {
 	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(inputPassword))
 }
