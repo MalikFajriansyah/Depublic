@@ -34,18 +34,16 @@ func LoginUseJwt(c echo.Context) error {
 		log.Fatal(err)
 	}
 
-	user := new(model.User)
-	if err := c.Bind(user); err != nil {
-		return err
-	}
+	username := c.FormValue("username")
+	password := c.FormValue("password")
 
 	//periksa data user
 	var existingUser model.User
-	if err := db.Where("username = ?", user.Username).First(&existingUser).Error; err != nil {
+	if err := db.Where("username = ?", username).First(&existingUser).Error; err != nil {
 		return echo.ErrUnauthorized
 	}
 
-	if err := verifyPasswordJwt(existingUser.Password, existingUser.Password); err != nil {
+	if err := verifyPasswordJwt(password, existingUser.Password); err != nil {
 		return echo.ErrUnauthorized
 	}
 	claims := CustomClaims{
