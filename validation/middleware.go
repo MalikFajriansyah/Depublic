@@ -15,10 +15,6 @@ func BasicAuthValidator(username, password string, c echo.Context) (bool, error)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.AutoMigrate(&model.User{})
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	user := new(model.User)
 	if err := c.Bind(user); err != nil {

@@ -20,10 +20,6 @@ func RegisterUser(c echo.Context) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.AutoMigrate(&model.User{})
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	var newUser model.User
 	if err := c.Bind(&newUser); err != nil {
@@ -75,10 +71,7 @@ func GetAllEvent(c echo.Context) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.AutoMigrate(&model.Event{})
-	if err != nil {
-		log.Fatal(err)
-	}
+
 	var events []model.Event
 	if err := db.Find(&events).Error; err != nil {
 		return c.JSON(http.StatusNotFound, map[string]string{"message": "Event belum tersedia"})
@@ -89,10 +82,6 @@ func GetAllEvent(c echo.Context) error {
 
 func GetEventByCategory(c echo.Context) error {
 	db, err := config.DatabaseInit()
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = db.AutoMigrate(&model.Event{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -110,10 +99,6 @@ func GetEventByLocation(c echo.Context) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.AutoMigrate(&model.Event{})
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	location := c.Param("location")
 	var events model.Event
@@ -125,10 +110,6 @@ func GetEventByLocation(c echo.Context) error {
 
 func SearchEventName(c echo.Context) error {
 	db, err := config.DatabaseInit()
-	if err != nil {
-		log.Fatal(err)
-	}
-	err = db.AutoMigrate(&model.Event{})
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -147,10 +128,7 @@ func CreateEvent(c echo.Context) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.AutoMigrate(&model.Event{})
-	if err != nil {
-		log.Fatal(err)
-	}
+
 	events := new(model.Event)
 	if err := c.Bind(events); err != nil {
 		return err

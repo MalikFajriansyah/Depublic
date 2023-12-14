@@ -29,16 +29,13 @@ func LoginUseJwt(c echo.Context) error {
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = db.AutoMigrate(&model.User{})
-	if err != nil {
-		log.Fatal(err)
-	}
 
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 
 	//periksa data user
 	var existingUser model.User
+
 	if err := db.Where("username = ?", username).First(&existingUser).Error; err != nil {
 		return echo.ErrUnauthorized
 	}
@@ -61,13 +58,9 @@ func LoginUseJwt(c echo.Context) error {
 		return err
 	}
 
-	// token := jwt.NewWithClaims(jwt.SigningMethodHS256, &CustomClaims{
-	// 	StandardClaims: jwt.StandardClaims{},
-	// 	Username:       existingUser.Username,
-	// })
-
 	return c.JSON(http.StatusOK, map[string]string{
-		"token": token,
+		"message": "Berhasil",
+		"token":   token,
 	})
 }
 
