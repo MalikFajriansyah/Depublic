@@ -3,7 +3,6 @@ package validation
 import (
 	"Depublic-App-Service/config"
 	"Depublic-App-Service/model"
-	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -11,10 +10,7 @@ import (
 )
 
 func BasicAuthValidator(username, password string, c echo.Context) (bool, error) {
-	db, err := config.DatabaseInit()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := config.GetDB()
 
 	user := new(model.User)
 	if err := c.Bind(user); err != nil {

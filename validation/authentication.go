@@ -3,10 +3,7 @@ package validation
 import (
 	"Depublic-App-Service/config"
 	"Depublic-App-Service/model"
-	"fmt"
-	"log"
 	"net/http"
-	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
@@ -15,20 +12,13 @@ import (
 
 type CustomClaims struct {
 	Username string `json:"username"`
+	Role     string `json:"role"`
 	jwt.StandardClaims
 }
 
-func ProtectedEnpoint(c echo.Context) error {
-	user := c.Get("user")
-	fmt.Println(user)
-	return c.String(http.StatusOK, "Welcome")
-}
-
 func LoginUseJwt(c echo.Context) error {
-	db, err := config.DatabaseInit()
-	if err != nil {
-		log.Fatal(err)
-	}
+
+	db := config.GetDB()
 
 	username := c.FormValue("username")
 	password := c.FormValue("password")
@@ -40,14 +30,16 @@ func LoginUseJwt(c echo.Context) error {
 		return echo.ErrUnauthorized
 	}
 
-	if err := verifyPasswordJwt(password, existingUser.Password); err != nil {
+	if err := verifyPasswordJwt(password, existingUser.Password); err != nil && password != existingUser.Password {
 		return echo.ErrUnauthorized
 	}
+
 	claims := CustomClaims{
 		existingUser.Username,
+		existingUser.Role,
 		jwt.StandardClaims{
-			Id:        "user_id",
-			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
+			Id: "user_id",
+			// ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
 		},
 	}
 

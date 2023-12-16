@@ -5,26 +5,37 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-func DatabaseInit() (*gorm.DB, error) {
+var db *gorm.DB
+var err error
+
+func DatabaseInit() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		panic(err)
+	}
+
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 	dbUser := os.Getenv("DB_USER")
 	dbPassword := os.Getenv("DB_PASSWORD")
 	dbName := os.Getenv("DB_NAME")
 
-	connection := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbPassword, dbName)
+	connection := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta", dbHost, dbUser, dbPassword, dbName, dbPort)
 
-	db, err := gorm.Open(postgres.Open(connection), &gorm.Config{})
+	db, err = gorm.Open(postgres.Open(connection), &gorm.Config{})
 
 	if err != nil {
-		return nil, err
+		fmt.Print(err)
 	}
 
 	db.AutoMigrate(&model.User{})
+}
 
-	return db, nil
+func GetDB() *gorm.DB {
+	return db
 }

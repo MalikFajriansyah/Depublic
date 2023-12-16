@@ -20,18 +20,21 @@ func InitRoutes() {
 	event.POST("/addEvent", controller.CreateEvent)
 	// e.Use(echojwt.JWT([]byte("SECRET")))
 
+	// Basic Authentication
 	basicAuth := e.Group("/basicAuth")
 	basicAuth.Use(middleware.BasicAuth(validation.BasicAuthValidator))
 	basicAuth.POST("/login", controller.LoginUser)
 
+	// JWT Authentication
 	jwt := e.Group("/jwt")
 	jwt.Use(echojwt.WithConfig(echojwt.Config{
 		SigningMethod: "HS512",
 		SigningKey:    []byte("SECRET"),
 	}))
+	// role user
 	jwt.GET("/home", controller.DashboardJwt)
+
 	e.POST("/register", controller.RegisterUser)
-	e.GET("/login", validation.LoginUseJwt)
-	e.GET("/protected", validation.ProtectedEnpoint)
+	e.POST("/login", validation.LoginUseJwt)
 	e.Start(":8080")
 }

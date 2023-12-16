@@ -3,7 +3,6 @@ package controller
 import (
 	"Depublic-App-Service/config"
 	"Depublic-App-Service/model"
-	"log"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -16,10 +15,7 @@ func LoginUser(c echo.Context) error {
 }
 
 func RegisterUser(c echo.Context) error {
-	db, err := config.DatabaseInit()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := config.GetDB()
 
 	var newUser model.User
 	if err := c.Bind(&newUser); err != nil {
@@ -67,11 +63,7 @@ func hashPassword(password string) (string, error) {
 
 /* Func untuk event*/
 func GetAllEvent(c echo.Context) error {
-	db, err := config.DatabaseInit()
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	db := config.GetDB()
 	var events []model.Event
 	if err := db.Find(&events).Error; err != nil {
 		return c.JSON(http.StatusNotFound, map[string]string{"message": "Event belum tersedia"})
@@ -81,10 +73,7 @@ func GetAllEvent(c echo.Context) error {
 }
 
 func GetEventByCategory(c echo.Context) error {
-	db, err := config.DatabaseInit()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := config.GetDB()
 
 	category := c.Param("category")
 	var events model.Event
@@ -95,11 +84,7 @@ func GetEventByCategory(c echo.Context) error {
 }
 
 func GetEventByLocation(c echo.Context) error {
-	db, err := config.DatabaseInit()
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	db := config.GetDB()
 	location := c.Param("location")
 	var events model.Event
 	if err := db.Where("location = ?", location).Find(&events).Error; err != nil {
@@ -109,10 +94,7 @@ func GetEventByLocation(c echo.Context) error {
 }
 
 func SearchEventName(c echo.Context) error {
-	db, err := config.DatabaseInit()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := config.GetDB()
 
 	searchQuery := c.QueryParam("event_name")
 	var events []model.Event
@@ -124,10 +106,7 @@ func SearchEventName(c echo.Context) error {
 }
 
 func CreateEvent(c echo.Context) error {
-	db, err := config.DatabaseInit()
-	if err != nil {
-		log.Fatal(err)
-	}
+	db := config.GetDB()
 
 	events := new(model.Event)
 	if err := c.Bind(events); err != nil {
@@ -143,6 +122,14 @@ func CreateEvent(c echo.Context) error {
 
 /* Func untuk page JWT*/
 func DashboardJwt(c echo.Context) error {
+
+	var existingUser model.User
+
+	if existingUser.Role == "admin" {
+		return c.JSON(http.StatusOK, map[string]string{
+			"message": "Welcome Admin",
+		})
+	}
 	return c.JSON(http.StatusOK, map[string]string{
 		"Message": "Login Success",
 	})
