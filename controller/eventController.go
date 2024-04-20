@@ -9,7 +9,7 @@ import (
 )
 
 func GetAllEvent(c echo.Context) error {
-	db := config.GetDB()
+	db := config.DatabaseInit()
 	var events []model.Event
 	if err := db.Find(&events).Error; err != nil {
 		return c.JSON(http.StatusNotFound, map[string]string{"message": "Event belum tersedia"})
@@ -19,7 +19,7 @@ func GetAllEvent(c echo.Context) error {
 }
 
 func GetEventByCategory(c echo.Context) error {
-	db := config.GetDB()
+	db := config.DatabaseInit()
 
 	category := c.Param("category")
 	var events model.Event
@@ -30,7 +30,7 @@ func GetEventByCategory(c echo.Context) error {
 }
 
 func GetEventByLocation(c echo.Context) error {
-	db := config.GetDB()
+	db := config.DatabaseInit()
 	location := c.Param("location")
 	var events model.Event
 	if err := db.Where("location = ?", location).Find(&events).Error; err != nil {
@@ -40,7 +40,7 @@ func GetEventByLocation(c echo.Context) error {
 }
 
 func SearchEventName(c echo.Context) error {
-	db := config.GetDB()
+	db := config.DatabaseInit()
 
 	searchQuery := c.QueryParam("event_name")
 	var events []model.Event
@@ -52,7 +52,7 @@ func SearchEventName(c echo.Context) error {
 }
 
 func CreateEvent(c echo.Context) error {
-	db := config.GetDB()
+	db := config.DatabaseInit()
 
 	events := new(model.Event)
 	if err := c.Bind(events); err != nil {

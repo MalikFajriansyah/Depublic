@@ -3,8 +3,10 @@ package controller
 import (
 	"Depublic-App-Service/config"
 	"Depublic-App-Service/model"
+	"Depublic-App-Service/validation"
 	"net/http"
 
+	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -15,7 +17,7 @@ func LoginUser(c echo.Context) error {
 }
 
 func RegisterUser(c echo.Context) error {
-	db := config.GetDB()
+	db := config.DatabaseInit()
 
 	var newUser model.User
 	if err := c.Bind(&newUser); err != nil {
@@ -23,14 +25,14 @@ func RegisterUser(c echo.Context) error {
 	}
 
 	//validasi data
-	if newUser.Username == "" || newUser.Password == "" {
+	if newUser.Username == "" || newUser.Email == "" || newUser.Password == "" {
 		return echo.NewHTTPError(http.StatusBadRequest, "username dan password harus diisi")
 	}
 
 	//cek jika data user sudah terdaftar
 	var existingUser model.User
-	if db.Where("username = ?", newUser.Username).First(&existingUser).Error == nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "username sudah digunakan")
+	if db.Where("email = ?", newUser.Email).First(&existingUser).Error == nil {
+		return echo.NewHTTPError(http.StatusBadRequest, "email sudah digunakan")
 	}
 
 	//setel role user registrasi
@@ -63,15 +65,11 @@ func hashPassword(password string) (string, error) {
 
 /* Func untuk page JWT*/
 func DashboardJwt(c echo.Context) error {
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*validation.CustomClaims)
 
-	var existingUser model.User
-
-	if existingUser.Role == "admin" {
-		return c.JSON(http.StatusOK, map[string]string{
-			"message": "Welcome Admin",
-		})
-	}
 	return c.JSON(http.StatusOK, map[string]string{
-		"Message": "Login Success",
+		"message":  "Welcome",
+		"username": claims.Username,
 	})
 }

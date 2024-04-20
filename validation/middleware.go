@@ -10,7 +10,7 @@ import (
 )
 
 func BasicAuthValidator(username, password string, c echo.Context) (bool, error) {
-	db := config.GetDB()
+	db := config.DatabaseInit()
 
 	user := new(model.User)
 	if err := c.Bind(user); err != nil {

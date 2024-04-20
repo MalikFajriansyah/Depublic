@@ -28,7 +28,7 @@ func InitRoutes() {
 	// JWT Authentication
 	jwt := e.Group("/jwt")
 	jwt.Use(echojwt.WithConfig(echojwt.Config{
-		SigningMethod: "HS512",
+		SigningMethod: "HS256",
 		SigningKey:    []byte("SECRET"),
 	}))
 	// role user

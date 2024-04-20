@@ -4,6 +4,7 @@ import (
 	"Depublic-App-Service/config"
 	"Depublic-App-Service/model"
 	"net/http"
+	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
@@ -18,19 +19,19 @@ type CustomClaims struct {
 
 func LoginUseJwt(c echo.Context) error {
 
-	db := config.GetDB()
+	db := config.DatabaseInit()
 
-	username := c.FormValue("username")
+	identifier := c.FormValue("username or email")
 	password := c.FormValue("password")
 
 	//periksa data user
 	var existingUser model.User
 
-	if err := db.Where("username = ?", username).First(&existingUser).Error; err != nil {
+	if err := db.Where("username = ? OR email = ?", identifier, identifier).First(&existingUser).Error; err != nil {
 		return echo.ErrUnauthorized
 	}
 
-	if err := verifyPasswordJwt(password, existingUser.Password); err != nil && password != existingUser.Password {
+	if err := verifyPasswordJwt(password, existingUser.Password); err != nil {
 		return echo.ErrUnauthorized
 	}
 
@@ -38,8 +39,8 @@ func LoginUseJwt(c echo.Context) error {
 		existingUser.Username,
 		existingUser.Role,
 		jwt.StandardClaims{
-			Id: "user_id",
-			// ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
+			Id:        "user_id",
+			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		},
 	}
 

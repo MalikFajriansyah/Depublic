@@ -3,6 +3,7 @@ package config
 import (
 	"Depublic-App-Service/model"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -11,9 +12,8 @@ import (
 )
 
 var db *gorm.DB
-var err error
 
-func DatabaseInit() {
+func DatabaseInit() *gorm.DB {
 	err := godotenv.Load(".env")
 	if err != nil {
 		panic(err)
@@ -27,15 +27,13 @@ func DatabaseInit() {
 
 	connection := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Jakarta", dbHost, dbUser, dbPassword, dbName, dbPort)
 
-	db, err = gorm.Open(postgres.Open(connection), &gorm.Config{})
+	db, e := gorm.Open(postgres.Open(connection), &gorm.Config{})
 
-	if err != nil {
-		fmt.Print(err)
+	if e != nil {
+		log.Fatal("Error connectiong to database : ", e)
 	}
 
 	db.AutoMigrate(&model.User{})
-}
 
-func GetDB() *gorm.DB {
 	return db
 }
