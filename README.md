@@ -1,7 +1,11 @@
 
 # Depublic
 
-Depublic is an online ticketing service. This repo contains a web service or backend that will be used by the front end.This is a project intended as a submission and also to practice my skills. In development I used Echo framework, GORM, Postgresql.
+The project entails the development of a backend service designed to facilitate
+the purchase of event tickets. Primarily built using Golang, with the Echo
+framework, and leveraging the GORM Object-Relational Mapping (ORM) for
+database interactions, the system aims to provide a seamless experience for
+users in procuring tickets for various events, And still development.
 
 
 ## API Reference
@@ -53,13 +57,11 @@ Depublic is an online ticketing service. This repo contains a web service or bac
 
 ## Features
 
-- Login and Register user use echo middleware basicAuth(done)
-- Search and Filter (done)
-- Implement JWT for authentication and authorization (On Progress)
-- User Profile (To Do)
-- Transaction History (To Do)
-- App Notification (To Do)
-
+- JWT-based Authentication: Users can securely log in and register through the system using JSON Web Tokens (JWT). This ensures authentication and authorization for accessing various functionalities.
+- Event Ticket Booking: The platform enables users to browse, select, and purchase tickets for a wide array of events. Through intuitive interfaces, users can seamlessly navigate the available options and secure their desired tickets.
+- Scalable and Efficient Backend: Leveraging Golang's robustness and efficiency, combined with the Echo framework's lightweight yet powerful features, the backend service ensures scalability and responsiveness even under high loads.
+- ORM with GORM: Database interactions are streamlined and simplified with the utilization of GORM ORM, offering an intuitive and efficient way to map Go structs to database tables and perform CRUD operations.
+- PostgreSQL Database: The project employs PostgreSQL as the backend database, ensuring data integrity, scalability, and flexibility for storing various aspects of event details, user information, and transaction records.
 
 ## Feedback
 
