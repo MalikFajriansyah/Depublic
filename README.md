@@ -16,8 +16,7 @@ users in procuring tickets for various events, And still development.
 ```
 #### Login
 ```http
-  use middleware.BasicAuth from echo framework
-  POST /depublic/login
+  POST /login
 ```
 
 ### Event
@@ -57,7 +56,7 @@ users in procuring tickets for various events, And still development.
 
 ## Features
 
-- JWT-based Authentication: Users can securely log in and register through the system using JSON Web Tokens (JWT). This ensures authentication and authorization for accessing various functionalities.
+- JWT-based Authentication: Users can securely log in and register through the system using JSON Web Tokens (JWT). This ensures authentication and authorization for accessing various functionalities. (still at the stage of understanding jwt)
 - Event Ticket Booking: The platform enables users to browse, select, and purchase tickets for a wide array of events. Through intuitive interfaces, users can seamlessly navigate the available options and secure their desired tickets.
 - Scalable and Efficient Backend: Leveraging Golang's robustness and efficiency, combined with the Echo framework's lightweight yet powerful features, the backend service ensures scalability and responsiveness even under high loads.
 - ORM with GORM: Database interactions are streamlined and simplified with the utilization of GORM ORM, offering an intuitive and efficient way to map Go structs to database tables and perform CRUD operations.
