@@ -3,9 +3,7 @@ module Depublic-App-Service
 go 1.21.5
 
 require (
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/joho/godotenv v1.5.1
-	github.com/labstack/echo-jwt v0.0.0-20221127215225-c84d41a71003
 	github.com/labstack/echo/v4 v4.12.0
 	golang.org/x/crypto v0.22.0
 	gorm.io/driver/postgres v1.5.7
@@ -13,12 +11,6 @@ require (
 )
 
 require (
-	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	golang.org/x/time v0.5.0 // indirect
-)
-
-require (
-	github.com/golang-jwt/jwt/v4 v4.5.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20231201235250-de7065d80cb9 // indirect
 	github.com/jackc/pgx/v5 v5.5.5 // indirect
