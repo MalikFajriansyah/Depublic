@@ -3,73 +3,83 @@ package controller
 import (
 	"Depublic-App-Service/config"
 	"Depublic-App-Service/model"
-	"Depublic-App-Service/validation"
 	"net/http"
 
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
 )
 
 /* Func untuk user*/
 func LoginUser(c echo.Context) error {
-	return c.JSON(http.StatusOK, map[string]string{"message": "Login successfull"})
+	db := config.DatabaseInit()
+
+	var body struct {
+		Account  string
+		Password string
+	}
+
+	if c.Bind(&body) != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "Failed to read body",
+		})
+	}
+
+	var user model.User
+	db.First(&user, "username = ? OR email = ?", body.Account, body.Account)
+
+	if user.ID == 0 {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "user not found",
+		})
+	}
+
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(body.Password))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "password is incorrect",
+		})
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{
+		"message": "user logged in",
+	})
 }
 
 func RegisterUser(c echo.Context) error {
 	db := config.DatabaseInit()
 
-	var newUser model.User
-	if err := c.Bind(&newUser); err != nil {
-		return err
+	var body struct {
+		Username string
+		Email    string
+		Password string
 	}
 
-	//validasi data
-	if newUser.Username == "" || newUser.Email == "" || newUser.Password == "" {
-		return echo.NewHTTPError(http.StatusBadRequest, "username dan password harus diisi")
+	if err := c.Bind(&body); err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "Invalid request body",
+		})
 	}
 
-	//cek jika data user sudah terdaftar
-	var existingUser model.User
-	if db.Where("email = ?", newUser.Email).First(&existingUser).Error == nil {
-		return echo.NewHTTPError(http.StatusBadRequest, "email sudah digunakan")
-	}
-
-	//setel role user registrasi
-	newUser.Role = "user"
-
-	//encrypt password
-	hashedPassword, err := hashPassword(newUser.Password)
+	hash, err := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return err
-	}
-	newUser.Password = hashedPassword
-
-	//create data baru ke database
-	if err := db.Create(&newUser).Error; err != nil {
-		return err
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "Failed generate password",
+		})
 	}
 
-	return c.JSON(http.StatusCreated, map[string]string{"message": "Akun berhasil dibuat"})
-}
+	user := model.User{Username: body.Username, Email: body.Email, Password: string(hash)}
 
-func hashPassword(password string) (string, error) {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	if err != nil {
-		return "", err
+	result := db.Create(&user)
+
+	if result.Error != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "Failed create user, email already exists",
+		})
 	}
-	return string(hashedPassword), nil
+
+	return c.JSON(http.StatusCreated, map[string]string{
+		"message": "user created",
+	})
 }
 
 /* Func untuk user*/
-
-/* Func untuk page JWT*/
-func DashboardJwt(c echo.Context) error {
-	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*validation.CustomClaims)
-
-	return c.JSON(http.StatusOK, map[string]string{
-		"message":  "Welcome",
-		"username": claims.Username,
-	})
-}
