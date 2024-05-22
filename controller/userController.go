@@ -4,6 +4,10 @@ import (
 	"Depublic-App-Service/config"
 	"Depublic-App-Service/model"
 	"net/http"
+	"os"
+	"time"
+
+	"github.com/golang-jwt/jwt/v5"
 
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"
@@ -39,6 +43,25 @@ func LoginUser(c echo.Context) error {
 			"error": "password is incorrect",
 		})
 	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"sub": user.ID,
+		"exp": time.Now().Add(time.Hour * 24 * 30).Unix(),
+	})
+
+	tokenString, err := token.SignedString([]byte(os.Getenv("SECRETKEY")))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{
+			"error": "failed to generate token",
+		})
+	}
+
+	cookie := new(http.Cookie)
+	cookie.Name = "Authorization"
+	cookie.Value = tokenString
+
+	cookie.SameSite = http.SameSiteLaxMode
+	c.SetCookie(cookie)
 
 	return c.JSON(http.StatusOK, map[string]string{
 		"message": "user logged in",
@@ -79,6 +102,14 @@ func RegisterUser(c echo.Context) error {
 
 	return c.JSON(http.StatusCreated, map[string]string{
 		"message": "user created",
+	})
+}
+
+func Home(c echo.Context) error {
+	user := c.Get("user")
+
+	return c.JSON(http.StatusOK, map[string]interface{}{
+		"message": user,
 	})
 }
 
