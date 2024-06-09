@@ -1,6 +1,7 @@
 package route
 
 import (
+	"Depublic-App-Service/config"
 	"Depublic-App-Service/controller"
 	"Depublic-App-Service/middlewares"
 
@@ -9,6 +10,8 @@ import (
 
 func InitRoutes() {
 	e := echo.New()
+
+	config.DatabaseInit()
 
 	event := e.Group("/api")
 	event.GET("/events", controller.GetAllEvent)
@@ -23,5 +26,6 @@ func InitRoutes() {
 	restricted := e.Group("/restricted")
 	restricted.Use(middlewares.Auth)
 	restricted.GET("/home", controller.Home)
+	restricted.POST("/order", controller.ReserveTickets)
 	e.Start(":8080")
 }
