@@ -18,7 +18,7 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		cookie, err := c.Cookie("Authorization")
 		if err != nil {
 			if err == http.ErrNoCookie {
-				return echo.NewHTTPError(http.StatusUnauthorized, "Token not found")
+				return echo.NewHTTPError(http.StatusUnauthorized, "You're not log in")
 			}
 			return err
 		}
