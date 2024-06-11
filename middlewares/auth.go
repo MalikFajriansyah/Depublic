@@ -14,7 +14,6 @@ import (
 
 func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		db := config.DatabaseInit()
 		cookie, err := c.Cookie("Authorization")
 		if err != nil {
 			if err == http.ErrNoCookie {
@@ -42,7 +41,7 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 			}
 
 			var user model.User
-			db.First(&user, claims["sub"])
+			config.DB.First(&user, claims["sub"])
 
 			if user.ID == 0 {
 				return c.JSON(http.StatusUnauthorized, "You are not authorized, Please login")

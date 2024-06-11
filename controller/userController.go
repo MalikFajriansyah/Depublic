@@ -15,8 +15,6 @@ import (
 
 /* Func untuk user*/
 func LoginUser(c echo.Context) error {
-	db := config.DatabaseInit()
-
 	var body struct {
 		Account  string
 		Password string
@@ -29,7 +27,7 @@ func LoginUser(c echo.Context) error {
 	}
 
 	var user model.User
-	db.First(&user, "username = ? OR email = ?", body.Account, body.Account)
+	config.DB.First(&user, "username = ? OR email = ?", body.Account, body.Account)
 
 	if user.ID == 0 {
 		return c.JSON(http.StatusBadRequest, map[string]string{
@@ -69,8 +67,6 @@ func LoginUser(c echo.Context) error {
 }
 
 func RegisterUser(c echo.Context) error {
-	db := config.DatabaseInit()
-
 	var body struct {
 		Username string
 		Email    string
@@ -92,7 +88,7 @@ func RegisterUser(c echo.Context) error {
 
 	user := model.User{Username: body.Username, Email: body.Email, Password: string(hash)}
 
-	result := db.Create(&user)
+	result := config.DB.Create(&user)
 
 	if result.Error != nil {
 		return c.JSON(http.StatusBadRequest, map[string]string{

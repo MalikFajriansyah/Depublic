@@ -11,7 +11,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func DatabaseInit() *gorm.DB {
+var DB *gorm.DB
+
+func DatabaseInit() {
 	err := godotenv.Load(".env")
 	if err != nil {
 		panic(err)
@@ -33,5 +35,5 @@ func DatabaseInit() *gorm.DB {
 
 	db.AutoMigrate(&model.User{}, &model.Event{})
 
-	return db
+	DB = db
 }

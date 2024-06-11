@@ -24,7 +24,7 @@ func ReserveTickets(c echo.Context) error {
 	customerName := user["name"].(string)
 
 	var event model.Event
-	if err := config.DatabaseInit().First(&event, requestBody.EventID).Error; err != nil {
+	if err := config.DB.First(&event, requestBody.EventID).Error; err != nil {
 		return echo.NewHTTPError(http.StatusNotFound, "Event Not found")
 	}
 
@@ -35,7 +35,7 @@ func ReserveTickets(c echo.Context) error {
 	order := model.Order{
 		CustomerName: customerName,
 	}
-	if err := config.DatabaseInit().Create(&order).Error; err != nil {
+	if err := config.DB.Create(&order).Error; err != nil {
 		return err
 	}
 
@@ -47,12 +47,12 @@ func ReserveTickets(c echo.Context) error {
 			EventName: event.EventName,
 		}
 	}
-	if err := config.DatabaseInit().Create(&orderItems).Error; err != nil {
+	if err := config.DB.Create(&orderItems).Error; err != nil {
 		return err
 	}
 
 	event.AvailableTicket -= requestBody.NumTickets
-	if err := config.DatabaseInit().Save(&event).Error; err != nil {
+	if err := config.DB.Save(&event).Error; err != nil {
 		return err
 	}
 
